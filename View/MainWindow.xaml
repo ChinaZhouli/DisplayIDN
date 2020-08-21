@@ -1,0 +1,703 @@
+﻿<Window x:Class="DisplayIDN.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:local="clr-namespace:DisplayIDN"
+        mc:Ignorable="d"
+        SizeChanged="Window_SizeChanged"
+        Title="MainWindow" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen" WindowStyle="None"
+        AllowsTransparency="True" FontSize="14">
+    <Window.Resources>
+        <local:ReadWriteToBrush x:Key="rw2b"/>
+        <local:ReadWriteToReadOnly x:Key="rw2r"/>
+        <local:ChangedToBrush x:Key="c2b"/>
+        <HierarchicalDataTemplate x:Key="HieraIDNGroup" DataType="{x:Type local:IDNGroupItem}" ItemsSource="{Binding Childs}"/>
+
+        <ControlTemplate x:Key="ComboBox.ConnerRadius" TargetType="ComboBox">
+            <Border CornerRadius="5"/>
+        </ControlTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+            <RowDefinition Height="26"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="#FF1976D2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Margin="5 0 0 0" VerticalAlignment="Center" 
+                       Foreground="#FFFFFFFF" Text="IDN 配置"/>
+            <Button Grid.Column="2" Margin="0 0 15 10" Width="20" Background="Transparent"
+                    Style="{StaticResource Button.MouseEnter}" Content="{StaticResource IconMin}"
+                    Click="BtnMin_Click"/>
+
+            <Button Grid.Column="3" Margin="0 0 15 0" Width="16" Background="Transparent"
+                    Style="{StaticResource Button.MouseEnter}" Content="{StaticResource IconMax}"
+                    Click="BtnMax_Click"/>
+
+            <Button Grid.Column="4" Margin="0 0 10 0" Width="16" Background="Transparent"
+                    Style="{StaticResource Button.MouseEnter}" Content="{StaticResource IconClose}"
+                    Click="BtnClose_Click"/>
+        </Grid>
+
+        <Border Grid.Row="1"
+                BorderThickness="1 0 1 1"
+                BorderBrush="#FFD7D7D7">
+            <TabControl Style="{StaticResource TabControl.UnderLineStyle}">
+                <TabItem Style="{StaticResource TabItem.UnderLine}" Header="参数修改">
+                    <Grid Margin="16 8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="42"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="270"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0"
+                                          SelectedIndex="0"
+                                          Margin="0 0 12 0"
+                                          Style="{StaticResource ComboBox.Base}"
+                                          BorderBrush="White">
+                                    <ComboBoxItem Content="Robot1"/>
+                                    <ComboBoxItem Content="Robot2"/>
+                                    <ComboBoxItem Content="Robot3"/>
+                                </ComboBox>
+                                <ComboBox Grid.Column="0"
+                                          SelectedIndex="0"
+                                          Foreground="#A6000000"
+                                          Style="{StaticResource ComboBox.Base}">
+                                    <ComboBoxItem Content="Robot 1"/>
+                                    <ComboBoxItem Content="Robot 2"/>
+                                    <ComboBoxItem Content="Robot 3"/>
+                                </ComboBox>
+                                <ComboBox Grid.Column="1"
+                                          SelectedIndex="0"
+                                          Margin="12 0 0 0"
+                                          Foreground="#A6000000"
+                                          Style="{StaticResource ComboBox.Base}">
+                                    <ComboBoxItem Content="Axes 1"/>
+                                    <ComboBoxItem Content="Axes 2"/>
+                                    <ComboBoxItem Content="Axes 3"/>
+                                    <ComboBoxItem Content="Axes 4"/>
+                                </ComboBox>
+                            </Grid>
+                        <Border Grid.Row="1"
+                                BorderThickness="1"
+                                BorderBrush="#FFD9D9D9"
+                                CornerRadius="4">
+                            <TreeView Margin="8 8 20 8" 
+                                      BorderThickness="0" 
+                                      Style="{StaticResource TreeView.Style}"
+                                      ItemsSource="{Binding Groups}"
+                                      ItemTemplate="{StaticResource HieraIDNGroup}"/>
+
+
+                        </Border>
+                        <Grid Grid.Column="1"
+                              Margin="8 0 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <local:WaterTextBox VerticalAlignment="Top"
+                                                WaterText="文件路径:"/>
+
+                            <StackPanel Grid.Column="1"
+                                        Height="32"
+                                        VerticalAlignment="Top"                                        
+                                        Orientation="Horizontal">
+                                <Button Margin="5 2 5 6" Style="{StaticResource Button.MouseEnter}"
+                                        Background="#FFFFFFFF" VerticalContentAlignment="Center"
+                                        Content="{StaticResource IconOpen.Modify}"/>
+
+                                <Button x:Name="btnModifyOpen" Margin="5 0" Style="{StaticResource Button.MouseEnter}"
+                                        Width="12" Background="#FFFFFFFF" 
+                                        VerticalContentAlignment="Center"
+                                        Content="{StaticResource IconArrow.ModifyOpen}"
+                                        MouseEnter="btnModifyOpen_MouseEnter" MouseLeave="btnModifyOpen_MouseLeave">
+                                </Button>
+
+                                <Popup x:Name="popupModifyOpen" IsOpen="False" StaysOpen="True" PopupAnimation="Slide" 
+                                       HorizontalOffset="5" VerticalOffset="3"
+                                       PlacementTarget="{Binding ElementName=btnModifyOpen}"
+                                       MouseLeave="popupModifyOpen_MouseLeave"
+                                       local:PopopHelper.PopupPlacementTarget="{Binding ElementName=btnModifyOpen}">
+                                    <Border Background="#FFFFFFFF"
+                                            CornerRadius="3"
+                                            BorderThickness="1"
+                                            BorderBrush="#FFD9D9D9">
+                                        <StackPanel>
+                                            <Button Style="{StaticResource Button.MouseEnter}" 
+                                                    Padding="5 3" Content="读取PC端文件"
+                                                    Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                            <Button Style="{StaticResource Button.MouseEnter}"
+                                                    Padding="5 3" Content="读取控制器文件"
+                                                    Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+
+                                <Button Margin="5 5" Style="{StaticResource Button.MouseEnter}"
+                                        Background="#FFFFFFFF" VerticalContentAlignment="Center"
+                                        Content="{StaticResource IconSave.Modify}"/>
+
+                                <Button x:Name="btnModifySave" Margin="5 0" Style="{StaticResource Button.MouseEnter}"
+                                        Width="12" Background="#FFFFFFFF" 
+                                        VerticalContentAlignment="Center"
+                                        Content="{StaticResource IconArrow.ModifySave}"
+                                        MouseEnter="btnModifySave_MouseEnter" MouseLeave="btnModifySave_MouseLeave"/>
+
+                                <Popup x:Name="popupModifySave" IsOpen="False" StaysOpen="True" PopupAnimation="Slide" 
+                                       HorizontalOffset="5" VerticalOffset="3"
+                                       PlacementTarget="{Binding ElementName=btnModifySave}"
+                                       MouseLeave="popupModifySave_MouseLeave"
+                                       local:PopopHelper.PopupPlacementTarget="{Binding ElementName=btnModifySave}">
+                                    <Border Background="#FFFFFFFF"
+                                            CornerRadius="3"
+                                            BorderThickness="1"
+                                            BorderBrush="#FFD9D9D9">
+                                        <StackPanel Background="#FFF0F8FA">
+                                            <Button Style="{StaticResource Button.MouseEnter}" 
+                                                Padding="5 2" Content="保存至控制器"
+                                                Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                            <Button Style="{StaticResource Button.MouseEnter}"
+                                                Padding="5 2" Content="备份至PC端"
+                                                Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </StackPanel>
+                        </Grid>
+
+                        <DataGrid Grid.Row="1"
+                                  Grid.Column="1"
+                                  Style="{StaticResource DataGrid.Style}"
+                                  RowStyle="{StaticResource DataGridRow.Modify}"
+                                  Margin="8 0 0 0"
+                                  ItemsSource="{Binding IDNModifyItems}">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Width="1*"
+                                                        MinWidth="100"
+                                                        Header="IDN">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource TextBlock.Style}" 
+                                                       Background="{Binding Background}"
+                                                       Text="{Binding IDN}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="3*"
+                                                        MinWidth="200"
+                                                        Header="标签">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource TextBlock.Style}"
+                                                       Background="{Binding Background}"
+                                                       Text="{Binding Label}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="3*"
+                                                        MinWidth="200">
+                                    <DataGridTemplateColumn.Header>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" 
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                      Text="值"/>
+                                            <TextBlock Grid.Column="1"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" ( "/>
+                                            <Ellipse Grid.Column="2"
+                                                     Width="8" 
+                                                     Height="8" 
+                                                     Fill="#FF67C23A"/>
+                                            <TextBlock Grid.Column="3"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" 掉高电生效"/>
+                                            <Ellipse Grid.Column="4"
+                                                     Margin="24 0 0 0"
+                                                     Width="8" 
+                                                     Height="8" 
+                                                     Fill="#FFF5222D"/>
+                                            <TextBlock Grid.Column="5" 
+                                                       Margin="0" 
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" 重启生效"/>
+                                            <TextBlock Grid.Column="6"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" ) "/>
+
+                                        </Grid>
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <local:TriangleTextBox Height="38"
+                                                                   ToolTip="{Binding Tips}"
+                                                                   Text="{Binding CurrentValue}"
+                                                                   Background="{Binding HasChanged,Converter={StaticResource c2b}}"
+                                                                   VerticalContentAlignment="Center" 
+                                                                   IsReadOnly="{Binding ReadWriteType,Converter={StaticResource rw2r}}"
+                                                                   TriangleBrush="{Binding ReadWriteType,Converter={StaticResource rw2b}}">
+                                                <!--<i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="TextChanged">
+                                                        <i:InvokeCommandAction Command="ModifyChanged" CommandParameter="{Binding SelectedItem,
+                                                            RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>-->
+                                            </local:TriangleTextBox>
+
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                    </Grid>
+                </TabItem>
+
+                <TabItem Style="{StaticResource TabItem.UnderLine}" Header="参数对比">
+                    <Grid Margin="16 8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="42"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.RowSpan="2"
+                                BorderThickness="1"                                  
+                                BorderBrush="#FFD9D9D9"
+                                CornerRadius="4">
+                            <TreeView Margin="8" 
+                                      BorderThickness="0" 
+                                      Style="{StaticResource TreeView.Style}"
+                                      ItemsSource="{Binding IDNGroups}"
+                                      ItemTemplate="{StaticResource HieraIDNGroup}"/>
+
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                Margin="8 0 0 0"
+                                Background="#FFFAFAFA"
+                                BorderBrush="#FFD9D9D9"
+                                BorderThickness="1 1 1 0"
+                                CornerRadius="4 4 0 0">
+                            <Grid Margin="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"  
+                                           Margin="16 0 0 0"
+                                           TextWrapping="NoWrap"
+                                           Style="{StaticResource TextBlock.Style}"
+                                           Background="Transparent"
+                                           Text="隐藏相同项: "/>
+
+                                <local:SwitchToggleButton Grid.Column="1"
+                                                          Margin="12 0 0 0"
+                                                          HorizontalAlignment="Left"
+                                                          CheckedContent="开"
+                                                          UnCheckedContent="关">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Checked">
+                                            <i:InvokeCommandAction Command="{Binding HiddenSameCommand}" 
+                                                                   CommandParameter="True"/>
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="Unchecked">
+                                            <i:InvokeCommandAction Command="{Binding HiddenSameCommand}" 
+                                                                   CommandParameter="False"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </local:SwitchToggleButton>
+
+                                <Grid Grid.Column="2"
+                                      Margin="0 0 12 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <local:WaterTextBox Grid.Column="0"
+                                                        Background="#FFFFFFFF"
+                                                        WaterText="文件路径:"/>
+
+                                    <Button Grid.Column="1"
+                                            Margin="5 2 5 6" Style="{StaticResource Button.MouseEnter}"
+                                            Background="#FFFAFAFA" VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconOpen.Compare1}"/>
+
+                                    <Button x:Name="btnCompareOpen1" 
+                                            Grid.Column="2" 
+                                            Margin="5 0" Style="{StaticResource Button.MouseEnter}"
+                                            Width="12" Background="#FFFAFAFA" 
+                                            VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconArrow.CompareOpen1}"
+                                            MouseEnter="btnCompareOpen1_MouseEnter" MouseLeave="btnCompareOpen1_MouseLeave">
+                                    </Button>
+
+                                    <Popup x:Name="popupCompareOpen1" IsOpen="False" StaysOpen="True" PopupAnimation="Slide" 
+                                       HorizontalOffset="5" VerticalOffset="3"
+                                       PlacementTarget="{Binding ElementName=btnCompareOpen1}"
+                                       MouseLeave="popupCompareOpen1_MouseLeave"
+                                       local:PopopHelper.PopupPlacementTarget="{Binding ElementName=btnCompareOpen1}">
+                                        <Border Background="#FFFFFFFF"
+                                            CornerRadius="3"
+                                            BorderThickness="1"
+                                            BorderBrush="#FFD9D9D9">
+                                            <StackPanel>
+                                                <Button Style="{StaticResource Button.MouseEnter}" 
+                                                    Padding="5 3" Content="读取PC端文件"
+                                                    Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                                <Button Style="{StaticResource Button.MouseEnter}"
+                                                    Padding="5 3" Content="读取控制器文件"
+                                                    Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Popup>
+
+                                    <Button Grid.Column="3"
+                                            Margin="5 5" Style="{StaticResource Button.MouseEnter}"
+                                            Background="#FFFAFAFA" VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconSave.Compare1}"/>
+
+                                    <Button x:Name="btnCompareSave1"
+                                            Grid.Column="4" 
+                                            Margin="5 0" Style="{StaticResource Button.MouseEnter}"
+                                            Width="12" Background="#FFFAFAFA" 
+                                            VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconArrow.CompareSave1}"
+                                            MouseEnter="btnCompareSave1_MouseEnter" MouseLeave="btnCompareSave1_MouseLeave"/>
+
+                                    <Popup x:Name="popupCompareSave1" IsOpen="False" StaysOpen="True" PopupAnimation="Slide" 
+                                       HorizontalOffset="5" VerticalOffset="3"
+                                       PlacementTarget="{Binding ElementName=btnCompareSave1}"
+                                       MouseLeave="popupCompareSave1_MouseLeave"
+                                       local:PopopHelper.PopupPlacementTarget="{Binding ElementName=btnCompareSave1}">
+                                        <Border Background="#FFFFFFFF"
+                                            CornerRadius="3"
+                                            BorderThickness="1"
+                                            BorderBrush="#FFD9D9D9">
+                                            <StackPanel Background="#FFF0F8FA">
+                                                <Button Style="{StaticResource Button.MouseEnter}" 
+                                                Padding="5 2" Content="保存至控制器"
+                                                Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                                <Button Style="{StaticResource Button.MouseEnter}"
+                                                Padding="5 2" Content="备份至PC端"
+                                                Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+
+                                <Grid Grid.Column="3"
+                                      Margin="0 0 12 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <local:WaterTextBox Grid.Column="0"
+                                                        Background="#FFFFFFFF"
+                                                        WaterText="文件路径:"/>
+
+                                    <Button Grid.Column="1"
+                                            Margin="5 2 5 6" Style="{StaticResource Button.MouseEnter}"
+                                            Background="#FFFAFAFA" VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconOpen.Compare2}"/>
+
+                                    <Button x:Name="btnCompareOpen2" 
+                                            Grid.Column="2" 
+                                            Margin="5 0" Style="{StaticResource Button.MouseEnter}"
+                                            Width="12" Background="#FFFAFAFA" 
+                                            VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconArrow.CompareOpen2}"
+                                            MouseEnter="btnCompareOpen2_MouseEnter" MouseLeave="btnCompareOpen2_MouseLeave">
+                                    </Button>
+
+                                    <Popup x:Name="popupCompareOpen2" IsOpen="False" StaysOpen="True" PopupAnimation="Slide" 
+                                       HorizontalOffset="5" VerticalOffset="3"
+                                       PlacementTarget="{Binding ElementName=btnCompareOpen2}"
+                                       MouseLeave="popupCompareOpen2_MouseLeave"
+                                       local:PopopHelper.PopupPlacementTarget="{Binding ElementName=btnCompareOpen2}">
+                                        <Border Background="#FFFFFFFF"
+                                            CornerRadius="3"
+                                            BorderThickness="1"
+                                            BorderBrush="#FFD9D9D9">
+                                            <StackPanel>
+                                                <Button Style="{StaticResource Button.MouseEnter}" 
+                                                    Padding="5 3" Content="读取PC端文件"
+                                                    Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                                <Button Style="{StaticResource Button.MouseEnter}"
+                                                    Padding="5 3" Content="读取控制器文件"
+                                                    Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Popup>
+
+                                    <Button Grid.Column="3"
+                                            Margin="5 5" Style="{StaticResource Button.MouseEnter}"
+                                            Background="#FFFAFAFA" VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconSave.Compare2}"/>
+
+                                    <Button x:Name="btnCompareSave2"
+                                            Grid.Column="4" 
+                                            Margin="5 0" Style="{StaticResource Button.MouseEnter}"
+                                            Width="12" Background="#FFFAFAFA" 
+                                            VerticalContentAlignment="Center"
+                                            Content="{StaticResource IconArrow.CompareSave2}"
+                                            MouseEnter="btnCompareSave2_MouseEnter" MouseLeave="btnCompareSave2_MouseLeave"/>
+
+                                    <Popup x:Name="popupCompareSave2" IsOpen="False" StaysOpen="True" PopupAnimation="Slide" 
+                                       HorizontalOffset="5" VerticalOffset="3"
+                                       PlacementTarget="{Binding ElementName=btnCompareSave2}"
+                                       MouseLeave="popupCompareSave2_MouseLeave"
+                                       local:PopopHelper.PopupPlacementTarget="{Binding ElementName=btnCompareSave2}">
+                                        <Border Background="#FFFFFFFF"
+                                            CornerRadius="3"
+                                            BorderThickness="1"
+                                            BorderBrush="#FFD9D9D9">
+                                            <StackPanel Background="#FFF0F8FA">
+                                                <Button Style="{StaticResource Button.MouseEnter}" 
+                                                Padding="5 2" Content="保存至控制器"
+                                                Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                                <Button Style="{StaticResource Button.MouseEnter}"
+                                                Padding="5 2" Content="备份至PC端"
+                                                Foreground="#FF666666" Background="#FFF0F8FA"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <DataGrid Grid.Row="1"
+                                  Grid.Column="1"
+                                  Style="{StaticResource DataGrid.Style}"
+                                  RowStyle="{StaticResource DataGridRow.Compare}"
+                                  Margin="8 0 0 0"
+                                  ItemsSource="{Binding IDNCompareItems}">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Width="1*"
+                                                        MinWidth="100"
+                                                        Header="IDN">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource TextBlock.Style}" 
+                                                       Background="{Binding Background}"
+                                                       Text="{Binding IDN}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="2*"
+                                                        MinWidth="200"
+                                                        Header="标签">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource TextBlock.Style}" 
+                                                       Background="{Binding Background}"
+                                                       Text="{Binding Description}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="3*"
+                                                        MinWidth="200">
+                                    <DataGridTemplateColumn.Header>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" 
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                      Text="值"/>
+                                            <TextBlock Grid.Column="1"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" ( "/>
+                                            <Ellipse Grid.Column="2"
+                                                     Width="8" 
+                                                     Height="8" 
+                                                     Fill="#FF67C23A"/>
+                                            <TextBlock Grid.Column="3"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" 掉高电生效"/>
+                                            <Ellipse Grid.Column="4"
+                                                     Margin="24 0 0 0"
+                                                     Width="8" 
+                                                     Height="8" 
+                                                     Fill="#FFF5222D"/>
+                                            <TextBlock Grid.Column="5" 
+                                                       Margin="0" 
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" 重启生效"/>
+                                            <TextBlock Grid.Column="6"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" ) "/>
+
+                                        </Grid>
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <local:TriangleTextBox Height="38"
+                                                                   ToolTip="{Binding Tips}"
+                                                                   Text="{Binding CurrentValue1}"
+                                                                   Background="{Binding HasChanged1,Converter={StaticResource c2b}}"
+                                                                   VerticalContentAlignment="Center"
+                                                                   IsReadOnly="{Binding ReadWriteType,Converter={StaticResource rw2r}}"
+                                                                   TriangleBrush="{Binding ReadWriteType,Converter={StaticResource rw2b}}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="3*"
+                                                        MinWidth="200">
+                                    <DataGridTemplateColumn.Header>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" 
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                      Text="值"/>
+                                            <TextBlock Grid.Column="1"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" ( "/>
+                                            <Ellipse Grid.Column="2"
+                                                     Width="8" 
+                                                     Height="8" 
+                                                     Fill="#FF67C23A"/>
+                                            <TextBlock Grid.Column="3"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" 掉高电生效"/>
+                                            <Ellipse Grid.Column="4"
+                                                     Margin="24 0 0 0"
+                                                     Width="8" 
+                                                     Height="8" 
+                                                     Fill="#FFF5222D"/>
+                                            <TextBlock Grid.Column="5" 
+                                                       Margin="0" 
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" 重启生效"/>
+                                            <TextBlock Grid.Column="6"  
+                                                       Margin="0"
+                                                       TextWrapping="NoWrap"
+                                                       Style="{StaticResource TextBlock.Style}"
+                                                       Background="Transparent"
+                                                       Text=" ) "/>
+
+                                        </Grid>
+                                    </DataGridTemplateColumn.Header>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <local:TriangleTextBox Height="38"
+                                                                   ToolTip="{Binding Tips}"
+                                                                   Text="{Binding CurrentValue2}"
+                                                                   Background="{Binding HasChanged2,Converter={StaticResource c2b}}"
+                                                                   VerticalContentAlignment="Center"
+                                                                   IsReadOnly="{Binding ReadWriteType,Converter={StaticResource rw2r}}"
+                                                                   TriangleBrush="{Binding ReadWriteType,Converter={StaticResource rw2b}}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Border>
+
+        <StatusBar Grid.Row="2"
+                   Background="#FF1976D2">
+
+        </StatusBar>
+    </Grid>
+</Window>
