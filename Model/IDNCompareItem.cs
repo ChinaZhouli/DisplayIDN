@@ -10,16 +10,31 @@ namespace DisplayIDN
     public class IDNCompareItem : ObservableObject
     {
         public string IDN { get; set; }
+
         public string Index { get; set; }
+
         public string Description { get; set; }
+
         public ValueModify ReadWriteType { get; set; }
+
         public bool NeedUpdate { get; set; }
+
         public bool IsString { get; set; }
+
         public bool NeedIndex { get; set; }
+
         public ValueAccess AccessLevel { get; set; }
+
         public string Min { get; set; }
+
+        /// <summary>
+        /// 最大值
+        /// </summary>
         public string Max { get; set; }
+
+
         public string EnumString { get; set; }
+
         public string Tips { get; set; }
 
         private bool isHiddemRow;
