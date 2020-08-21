@@ -21,7 +21,7 @@ namespace DisplayIDN
         public MainViewModel()
         {
             Groups = new ObservableCollection<IDNGroupItem>();
-            XDocument xml = XDocument.Load(@"Group.xml");
+            XDocument xml = XDocument.Load(@"Label.xml");
             foreach (var itemNodeOne in xml.Root.Elements())
             {
                 string headerOne = itemNodeOne.Attribute("Header").Value;
